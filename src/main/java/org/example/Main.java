@@ -137,20 +137,26 @@ public class Main {
 
 
 
-        }
+            }
                 for (int i = 0; i < boom.length(); i++) {
                     terminal.setCursorPosition(monsterPosition.column + i, monsterPosition.row);
                     terminal.putCharacter(boom.charAt(i));
                     terminal.flush();
 
                 }
+                // Shoot method call
+                if (c == Character.valueOf('k')){
+                    shoot(terminal, column, row, direction);
+                }
             }
+
 
             // Shoot method call
             if (c == Character.valueOf('k')){
                 shoot(terminal, column, row, direction, walls);
 
             }
+
 
 
         }
@@ -184,11 +190,13 @@ public class Main {
         return walls;
     }
 
-    private static void DrawWall(Terminal terminal, ArrayList<Position> walls) throws IOException {
+    private static ArrayList<Position> DrawWall(Terminal terminal, ArrayList<Position> walls) throws IOException {
         for (Position p : walls) {
             terminal.setCursorPosition(p.column, p.row);
             terminal.putCharacter(block);
+
         }
+
     }
 
     public static Position CreateMonster(Terminal terminal) throws IOException {
@@ -243,8 +251,44 @@ public class Main {
         }
     }
 
+    static public void createScore(Terminal terminal, Score score) throws IOException {
+        String text = score.getScoreText();
+        for(var i = 0; i < text.length(); i++){
+            terminal.setCursorPosition(score.scoreColumn+i,score.scoreRow);
+            terminal.putCharacter(text.charAt(i));
+        }
+        terminal.flush();
+    }
+    static public void addScore(Terminal terminal, Score score) throws IOException {
+        score.increseScore();
+
+        String text = score.getScoreText();
+        for(var i = 0; i < text.length(); i++){
+            terminal.setCursorPosition(score.scoreColumn+i,score.scoreRow);
+            terminal.putCharacter(text.charAt(i));
+        }
+        terminal.flush();
+
+    }
 
 }
+
+
+
+
+
+//Ta bort monster i Array. I samma ställe där du gör addScore
+// for (int i  = 0; i < monsterArray.size(); i++){
+//      if(bulletPosition.column == m.column && bulletPosition.row == m.row){
+//          monsterArray.remove(i);
+//          break;
+//      }
+// }
+
+
+
+
+
 
 //Position bombPosition = CreateBomb(terminal);
 /*// om bombposition är på samma column och row som x, så kommer massa B skrivas ut på skärmen, game over.
