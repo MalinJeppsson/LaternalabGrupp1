@@ -10,8 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.googlecode.lanterna.Symbols.*;
+import static org.example.Shoot.shoot;
 
 public class Main {
     final static char block = '\u2588';
@@ -32,6 +35,8 @@ public class Main {
         String boom = "Game over";
 
         Character direction = 'd';
+        int count = 0;
+        Timer timer = new Timer();
 
         ArrayList<Position> walls = CreateWalls(terminal);
         Position monsterPosition = CreateMonster(terminal);
@@ -44,6 +49,17 @@ public class Main {
         terminal.flush();
 
         boolean monster = false;
+
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    walls.add(CreateMonster(terminal));
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }, 0, 5000);
 
         if (monsterPosition.column == column && monsterPosition.row == row) {
             monster = true;
@@ -118,7 +134,7 @@ public class Main {
 
 
             if (column == monsterPosition.column && row == monsterPosition.row) {
-                
+
 
 
             }
@@ -126,7 +142,6 @@ public class Main {
                     terminal.setCursorPosition(monsterPosition.column + i, monsterPosition.row);
                     terminal.putCharacter(boom.charAt(i));
                     terminal.flush();
-
 
                 }
                 // Shoot method call
@@ -136,6 +151,15 @@ public class Main {
             }
 
 
+            // Shoot method call
+            if (c == Character.valueOf('k')){
+                shoot(terminal, column, row, direction, walls);
+
+            }
+
+
+
+        }
 
     }
 
@@ -170,22 +194,16 @@ public class Main {
         for (Position p : walls) {
             terminal.setCursorPosition(p.column, p.row);
             terminal.putCharacter(block);
-     
-            walls.add(new Position(6, 10));
-            walls.add(new Position(7, 10));
-            DrawWall(terminal, walls);
-
 
         }
-        return walls;
-      
+
     }
 
-    private static Position CreateMonster(Terminal terminal) throws IOException {
+    public static Position CreateMonster(Terminal terminal) throws IOException {
         Random addMonster = new Random();
         Position monsterPosition = new Position(addMonster.nextInt(80), addMonster.nextInt(24));
         terminal.setCursorPosition(monsterPosition.column, monsterPosition.row);
-        terminal.putCharacter('\uDC7D');
+        terminal.putCharacter(DOUBLE_LINE_CROSS);
         terminal.flush();
 
         return monsterPosition;
@@ -232,6 +250,7 @@ public class Main {
             Thread.sleep(3);
         }
     }
+
     static public void createScore(Terminal terminal, Score score) throws IOException {
         String text = score.getScoreText();
         for(var i = 0; i < text.length(); i++){
@@ -265,6 +284,7 @@ public class Main {
 //          break;
 //      }
 // }
+
 
 
 
